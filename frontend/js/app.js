@@ -178,19 +178,19 @@ async function loadInfo() {
     subHeading.innerText = h2_presale_mint;
     
     try {
-      // CHECK IF WHITELISTED
+      // CHECK IF APPROVEDLIST
       const merkleData = await fetch(
         `/.netlify/functions/merkleProof/?wallet=${window.address}&chain=${chain}&contract=${contractAddress}`
       );
       const merkleJson = await merkleData.json();
-      const whitelisted = await contract.methods.isWhitelisted(window.address, merkleJson).call();
-      if(!whitelisted) {
-        mainText.innerText = p_presale_mint_not_whitelisted;
-        actionButton.innerText = button_presale_mint_not_whitelisted;
+      const approvedlist = await contract.methods.isAppovedList(window.address, merkleJson).call();
+      if(!approvedlist) {
+        mainText.innerText = p_presale_mint_not_approvedlist;
+        actionButton.innerText = button_presale_mint_not_approvedlist;
       } else {
-        mainText.innerText = p_presale_mint_whitelisted;
+        mainText.innerText = p_presale_mint_approvedlist;
         actionButton.classList.add('hidden');
-        mintButton.innerText = button_presale_mint_whitelisted;
+        mintButton.innerText = button_presale_mint_approvedlist;
         mintContainer.classList.remove('hidden');
       }
     } catch(e) {
@@ -365,7 +365,7 @@ async function mint() {
       } else {
         const mainText = document.getElementById("mainText");
         mainText.innerText = mint_failed;
-        mintButton.innerText = button_presale_mint_whitelisted;
+        mintButton.innerText = button_presale_mint_approvedlist;
         mintButton.disabled = false;
 
         console.log("Failed to mint!");
@@ -373,7 +373,7 @@ async function mint() {
     } catch(e) {
       const mainText = document.getElementById("mainText");
       mainText.innerText = mint_failed;
-      mintButton.innerText = button_presale_mint_whitelisted;
+      mintButton.innerText = button_presale_mint_approvedlist;
       mintButton.disabled = false;
 
       // console.log(e);

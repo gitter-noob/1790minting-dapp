@@ -22,7 +22,7 @@
     PREREVEAL_TOKEN_URI,
     ROYALTY_SHARE,
     ROYALTY_ADDRESS,
-    PRESALE_WHITELISTED_ADDRESSES,
+    PRESALE_APPROVEDLIST_ADDRESSES,
   } = require(`${basePath}/src/config.js`);
 
   const contract = {
@@ -31,7 +31,7 @@
   };
   let updateValue = "";
 
-  const getWhiteList = async () => {
+  const getApprovedList = async () => {
     // create promise
     return new Promise(async (resolve, reject) => {
       const url = `https://api.nftport.xyz/v0/me/contracts/collections?chain=${CHAIN.toLowerCase()}`;
@@ -48,11 +48,11 @@
           (contract) =>
             contract.address.toLowerCase() === CONTRACT_ADDRESS.toLowerCase()
         );
-        const presaleWhitelistedAddresses =
-          contractInfo[0]?.presale_whitelisted_addresses || [];
-        resolve(presaleWhitelistedAddresses);
+        const presaleApprovedListAddresses =
+          contractInfo[0]?.presale_approvedlist_addresses || [];
+        resolve(presaleApprovedListAddresses);
       } else {
-        console.log(`Whitelist fetch failed!`);
+        console.log(`ApprovedList fetch failed!`);
         reject(response);
       }
     });
@@ -67,25 +67,25 @@
       contract.presale_mint_start_date = PRESALE_MINT_START_DATE;
       updateValue = PRESALE_MINT_START_DATE;
       break;
-    case "presale_whitelisted_addresses":
-      const addresses_add = PRESALE_WHITELISTED_ADDRESSES.map((address) =>
+    case "presale_approvedlist_addresses":
+      const addresses_add = PRESALE_APPROVEDLIST_ADDRESSES.map((address) =>
         address.toLowerCase()
       );
-      const existingAddresses = await getWhiteList();
-      contract.presale_whitelisted_addresses = [
+      const existingAddresses = await getApprovedList();
+      contract.presale_approvedlist_addresses = [
         ...existingAddresses,
         ...addresses_add,
       ];
-      updateValue = `include ${PRESALE_WHITELISTED_ADDRESSES}`;
+      updateValue = `include ${PRESALE_APPROVEDLIST_ADDRESSES}`;
       break;
-    case "presale_whitelisted_addresses_remove":
-      const addresses_remove = PRESALE_WHITELISTED_ADDRESSES.map((address) =>
+    case "presale_approvedlist_addresses_remove":
+      const addresses_remove = PRESALE_APPROVEDLIST_ADDRESSES.map((address) =>
         address.toLowerCase()
       );
-      const existingAddressesList = await getWhiteList();
+      const existingAddressesList = await getApprovedList();
       const updatedAddresses = existingAddressesList.filter((address) => !addresses_remove.includes(address));
-      contract.presale_whitelisted_addresses = updatedAddresses;
-      updateValue = `remove ${PRESALE_WHITELISTED_ADDRESSES}`;
+      contract.presale_approvedlist_addresses = updatedAddresses;
+      updateValue = `remove ${PRESALE_APPROVEDLIST_ADDRESSES}`;
       break;
     case "royalty_share":
       contract.royalty_share = ROYALTY_SHARE;
